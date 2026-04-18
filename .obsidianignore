@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+dist
+package.json
+package-lock.json
+tsconfig.json
+next.config.ts
+postcss.config.mjs
+next-env.d.ts
+.gitignore
+.env*
+*.tsbuildinfo
+.vercel
