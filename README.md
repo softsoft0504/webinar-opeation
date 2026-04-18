@@ -1,54 +1,85 @@
-# Workshop Q&A Dashboard
+# webinar-opeation
 
-4시간 워크숍·세미나에서 참가자 Q&A를 10분씩 돌아가며 운영하기 위한 단일 페이지 대시보드.
-참가자는 이름과 질문을 셀프로 등록하고, 운영자는 타이머 · 다음 순서 · 쉬는 시간을 수동으로 제어한다.
+이 repo는 워크숍 Q&A 대시보드를 "만드는 과정 그 자체"를 담아낸 기록물이다.
+실제 강의 중, 회원가입부터 프로덕션 배포까지 **전 과정을 보이스 덤프 + AI 에이전트로만** 진행했다.
 
 **Live:** https://webinar-qa-snowy.vercel.app
 **Repo:** https://github.com/softsoft0504/webinar-opeation
 
 ---
 
-## 핵심 기능
+## 이 프로젝트의 진짜 목적
 
-- **단일 URL, 양방향**: 참가자도 운영자도 같은 페이지를 본다. 인증·권한 분리 없이 "악용 없음" 전제로 단순하게 유지.
-- **셀프 등록**: 참가자는 페이지 하단 인라인 폼에서 이름 + 질문을 입력해 대기열에 바로 추가된다.
-- **10분 수동 타이머**: 0이 되어도 자동 전환하지 않는다. 운영자가 "다음", "쉬는 시간", "현재 종료" 버튼으로 리듬을 제어한다.
-- **쉬는 시간 모드**: 중앙에 큰 카운트다운을 덮어쓰고, 재개하면 이전 상태로 복귀한다.
-- **실시간 동기화**: Supabase Realtime 구독으로 여러 창·기기에서 동시에 같은 상태를 본다. 실시간 이벤트 누락 시에도 mutation 직후 즉시 재fetch로 UI가 갱신된다.
-- **데모 모드**: Supabase 환경변수 없이 로컬 실행 시 목업 데이터로 UI가 뜬다 (디자인 확인용).
+실질적인 용도는 "워크숍 Q&A 대기열 관리 대시보드"를 만드는 것이지만,
+**진짜 이유는 다음과 같은 워크플로우를 End-to-End 로 시연하는 것이다:**
 
----
+1. **보이스 덤프 기반 바이브 코딩** - 기획서 없이, 말 그대로 음성으로 뱉은 생각 덩어리가 입력의 시작.
+2. **OMC Deep Interview** - 보이스 덤프의 모호성을 소크라테스식 7라운드 문답으로 ambiguity 8%까지 수학적으로 낮춘 뒤 스펙 문서로 크리스탈화.
+3. **Autopilot 파이프라인** - 스펙 → 구현 계획 → 6개 컴포넌트 + 세션 헬퍼 + 대시보드 조립 → 빌드 검증까지 단계별 자동 진행.
+4. **Claude Browser Use / 에이전트 오케스트레이션** - 코드 한 줄 직접 타이핑하지 않고, 필요한 외부 서비스(Supabase, GitHub, Vercel) 연동도 에이전트가 브라우저/CLI로 수행.
+5. **실 라이브 배포** - Supabase 회원가입·SQL 실행, GitHub repo 연결과 PAT 발급, Vercel 회원가입·환경변수 투입·배포까지 전부 실시간 진행.
 
-## 스택
+즉, 이 repo는 "결과물"이라기보다는 "과정의 증거"에 가깝다.
+`PLAN.md` 와 `.omc/specs/deep-interview-workshop-qa-dashboard.md` 안에 그 과정의 로그가 그대로 남아있다.
 
-- **프레임워크**: Next.js 15 (App Router) + TypeScript
-- **스타일**: Tailwind CSS v4, Pretendard 웹폰트
-- **백엔드**: Supabase (Postgres + Realtime)
-- **배포**: Vercel (GitHub push 자동 배포)
+> 워크숍 컨텍스트에서 Q&A 운영 도구가 필요하다는 착상이 있었고, 그 실질적 필요를 재료 삼아 "이런 앱을 이렇게 만드는 흐름" 자체를 시연하는 데 사용되었다.
 
 ---
 
-## 사용 방법
+## 시연에 포함된 "직접 손 대지 않은" 단계들
 
-### 참가자
-1. 공유된 URL 접속
-2. 페이지 하단 폼에 이름·질문 입력 → **줄 서기**
-3. 대기열 순서 기다리다 자기 차례 오면 운영자와 Q&A
+| 단계 | 사용자가 한 일 | AI가 한 일 |
+|------|--------------|-----------|
+| 아이디어 수집 | 음성으로 "이런 거 만들고 싶다" 구술 | 음성 덤프를 이해·요약 |
+| 요구사항 정제 | Deep Interview 문항에 답변만 | 7라운드 소크라테스식 질문 + ambiguity 스코어링 |
+| 기술 스택 선택 | 추천 중 선택만 | Next.js + Tailwind + Supabase 조합 제안 |
+| 계획 작성 | 한 번 훑어봄 | PLAN.md 생성 (아키텍처·파일 구조·상태 전이 포함) |
+| 코드 작성 | 전혀 안 함 | 모든 컴포넌트·라이브러리·페이지 작성 |
+| DB 설계 | SQL 실행만 | 스키마·RLS 정책·Realtime publication SQL 제공 |
+| Supabase 가입 | 회원가입 + API 키 복사 | 가이드 제공, 키 연동 |
+| GitHub push | PAT 발급·붙여넣기 | credential 저장, remote 설정, push |
+| Vercel 배포 | 회원가입, 환경변수 붙여넣기, Deploy 클릭 | 단계별 브라우저 가이드 제공 |
+| 버그 수정 | "이거 안 돼" 한마디 | 원인 분석 + 패치 + commit + push |
 
-### 운영자
-- **첫 번째 대기자 시작** / **다음 →**: 다음 발표자로 전환, 10분 타이머 리셋
-- **쉬는 시간**: 중앙에 큰 카운트다운 표시, 다른 UI 잠금
-- **재개하기**: 쉬는 시간 종료
-- **현재 종료**: 대기자 없을 때 현재 세션을 idle로
-- 대기열 항목에 hover하면 **삭제** 버튼 나옴
+강의 청중은 "그래서 이거 진짜로 되나?"를 끝까지 지켜본다.
+**대답은 위 Live URL에 있다.**
 
 ---
 
-## 로컬 실행
+## 만들어진 앱 자체에 대해
 
-### 1. Supabase 준비
+워크숍이나 세미나 운영 중, 참가자가 줄을 서서 10분씩 Q&A를 받는 상황에 쓸 수 있는 단일 페이지 대시보드.
 
-[supabase.com](https://supabase.com)에서 새 프로젝트 생성 후 SQL Editor에 아래 실행:
+### 핵심 기능
+
+- **단일 URL, 양방향**: 참가자와 운영자가 같은 페이지를 본다. 인증·권한 분리 없이 "악용 없음" 전제로 단순하게.
+- **셀프 등록**: 참가자가 하단 인라인 폼에 이름·질문을 입력하면 바로 대기열에 추가.
+- **10분 수동 타이머**: 0이 되어도 자동 전환하지 않음. 운영자가 "다음" / "쉬는 시간" / "현재 종료" 버튼으로 리듬 제어.
+- **쉬는 시간 모드**: 중앙 큰 카운트다운으로 화면 덮기. 재개하면 원상태 복귀.
+- **실시간 동기화**: Supabase Realtime. 이벤트 누락 시에도 mutation 직후 재fetch로 UI 즉시 갱신.
+- **데모 모드**: `.env.local` 없이 실행 시 목업 데이터로 UI 만 확인 가능.
+
+### 스택
+
+Next.js 15 (App Router) / TypeScript / Tailwind v4 / Pretendard / Supabase / Vercel
+
+### 파일 구조
+
+```
+app/               메인 페이지 + 레이아웃 + 전역 CSS
+components/        Timer, CurrentSpeaker, QueueList, RegisterForm, BreakMode, OperatorControls
+lib/               Supabase 클라이언트, 세션 헬퍼, 타입, 데모 모드
+.omc/specs/        Deep interview 결과 스펙 (이 repo를 낳은 문서)
+PLAN.md            구현 계획 (아키텍처·상태 전이·검증 기준)
+```
+
+---
+
+## 재현하기
+
+### 1. Supabase
+
+[supabase.com](https://supabase.com)에서 새 프로젝트를 만들고 SQL Editor에 실행:
 
 ```sql
 create table sessions (
@@ -84,110 +115,41 @@ alter publication supabase_realtime add table sessions;
 alter publication supabase_realtime add table queue_entries;
 ```
 
-> **주의**: 위 정책은 "악용 없음 전제로 단순하게"라는 스펙 조건을 그대로 따른다. 프로덕션 공개 배포라면 RLS를 더 좁히거나 운영자 전용 쓰기 경로를 추가해야 한다.
-
 ### 2. 환경변수
-
-```bash
-cp .env.local.example .env.local
-```
-
-`.env.local`에 Supabase Project Settings → API 에서 복사한 값 붙여넣기:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-### 3. 실행
+`.env.local.example` 참고.
+
+### 3. 로컬 실행
 
 ```bash
 npm install
 npm run dev
 ```
 
-브라우저에서 http://localhost:3000 (또는 3000이 점유 중이면 Next.js가 자동으로 다른 포트 사용).
+### 4. 배포
 
-환경변수 없이 실행하면 **Demo mode** 배지와 함께 목업 데이터가 표시된다.
-
-### 4. 프로덕션 빌드
-
-```bash
-npm run build
-npm start
-```
+Vercel에서 GitHub repo import → 위 환경변수 2개 추가 → Deploy.
+이후 push 시 자동 재배포.
 
 ---
 
-## 배포 (Vercel)
+## 한계 / 의도적 단순화
 
-1. Vercel Dashboard → **New Project** → GitHub에서 이 repo 선택
-2. **Environment Variables** 섹션에 `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` 2개 추가 (Production + Preview + Development 모두 체크)
-3. **Deploy**
-
-이후 `git push` 할 때마다 자동 재배포된다.
+- 인증 없음. 누구나 모든 버튼 누를 수 있음 (현장 운영 모델 전제).
+- 단일 행사 세션. 여러 워크숍 동시 운영 불가.
+- 타이머 자동 전환 없음. 실제 대화 흐름을 보고 운영자가 판단.
 
 ---
 
-## 파일 구조
+## 참고
 
-```
-webinar-opeation/
-├── app/
-│   ├── layout.tsx          # Pretendard 로드, 전역 레이아웃
-│   ├── globals.css         # Tailwind v4 + 다크 테마 CSS 변수
-│   └── page.tsx            # 메인 대시보드 (realtime 구독 + mutation 재fetch)
-├── components/
-│   ├── TimerDisplay.tsx    # 카운트다운 (Q&A / 쉬는 시간 공용)
-│   ├── CurrentSpeaker.tsx  # 현재 발표자 이름 + 질문
-│   ├── QueueList.tsx       # 대기자 리스트 (삭제 버튼 hover 노출)
-│   ├── RegisterForm.tsx    # 참가자 셀프 등록 인라인 폼
-│   ├── BreakMode.tsx       # 쉬는 시간 전체 오버레이
-│   └── OperatorControls.tsx# 운영자 버튼들 (mode 별 다르게)
-├── lib/
-│   ├── supabase.ts         # Supabase 클라이언트 싱글톤
-│   ├── session.ts          # 세션·대기열 CRUD, 상태 전이
-│   ├── mock.ts             # 데모 모드 인메모리 상태
-│   └── types.ts            # Session, QueueEntry 타입
-├── .omc/specs/             # Deep interview 스펙 (이 repo를 만든 근거)
-├── PLAN.md                 # 구현 계획 문서
-└── README.md
-```
+이 repo가 만들어진 과정이 궁금하다면:
 
----
-
-## 데이터 모델
-
-### `sessions`
-행사당 한 row만 사용. 상태 머신은 `mode` 컬럼 (`idle` / `qa` / `break`).
-
-| 컬럼 | 용도 |
-|------|------|
-| `mode` | 현재 상태 |
-| `current_entry_id` | 지금 발표 중인 QueueEntry (nullable) |
-| `timer_started_at` | 타이머 시작 시각. 각 클라이언트가 로컬에서 경과시간 계산 |
-| `timer_duration_sec` / `break_duration_sec` | 기본 600초(10분) |
-
-### `queue_entries`
-
-| 컬럼 | 용도 |
-|------|------|
-| `status` | `waiting` / `current` / `done` / `skipped` |
-| `created_at` | 대기열 순서 결정 |
-| `started_at` / `ended_at` | 실제 Q&A 시작/종료 시각 |
-
-타이머가 서버에서 push되지 않고 `timer_started_at` 기준으로 각 클라이언트가 로컬 계산하므로, 네트워크 끊김에도 타이머는 멈추지 않는다.
-
----
-
-## 한계 / 의도적인 단순화
-
-- **인증 없음**: 누구나 모든 버튼을 누를 수 있다. 워크숍 현장에서 URL만 공유하는 운영 모델 기준이다.
-- **단일 행사 세션**: 여러 워크숍을 동시에 운영하지 못한다. 새 행사 시작 시 이전 `queue_entries` 를 Supabase에서 직접 정리하거나 새 `sessions` row를 만들어 사용하는 식으로 운영한다.
-- **자동 타이머 전환 없음**: 타이머가 0이 되어도 스스로 다음으로 넘어가지 않는다. 운영자가 실제 대화 흐름을 보고 결정한다는 설계 의도.
-
----
-
-## 개발 배경
-
-이 프로젝트는 [oh-my-claudecode](https://github.com/AnthropicProject/oh-my-claudecode) 의 **Deep Interview → Autopilot** 파이프라인을 따라 만들어졌다. 요구사항은 7라운드 소크라테스식 문답으로 ambiguity 8% 까지 낮춘 뒤 스펙 파일로 크리스탈화되었고, 그 스펙이 Next.js 앱 구현으로 이어졌다. 전체 맥락은 `.omc/specs/deep-interview-workshop-qa-dashboard.md` 와 `PLAN.md` 에 남아있다.
+- [`PLAN.md`](./PLAN.md) - 에이전트가 작성한 구현 계획 전문
+- [`.omc/specs/deep-interview-workshop-qa-dashboard.md`](./.omc/specs/deep-interview-workshop-qa-dashboard.md) - Deep Interview 7라운드 전체 문답 + ambiguity 스코어 변화
+- [oh-my-claudecode](https://github.com/bestwardone/oh-my-claudecode) - 사용된 Claude Code 오케스트레이션 프레임워크
