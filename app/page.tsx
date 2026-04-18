@@ -108,6 +108,26 @@ export default function DashboardPage() {
     (e) => e.status === "waiting" && e.id !== session?.current_entry_id
   );
 
+  async function refresh() {
+    try {
+      const s = await getOrCreateSession();
+      const list = await fetchEntries(s.id);
+      setSession(s);
+      setEntries(list);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+
+  async function runReal<T>(fn: () => Promise<T>) {
+    try {
+      await fn();
+      await refresh();
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+
   const handlers = demoMode
     ? {
         next: () => mockStartNext(),
@@ -119,15 +139,16 @@ export default function DashboardPage() {
         del: (id: string) => mockDeleteEntry(id),
       }
     : {
-        next: () => session && startNext(session, entries).catch((e) => setError(e.message)),
-        end: () => session && endCurrent(session).catch((e) => setError(e.message)),
-        break_: () => session && startBreak(session).catch((e) => setError(e.message)),
-        resume: () =>
-          session && resumeFromBreak(session).catch((e) => setError(e.message)),
+        next: () => session && runReal(() => startNext(session, entries)),
+        end: () => session && runReal(() => endCurrent(session)),
+        break_: () => session && runReal(() => startBreak(session)),
+        resume: () => session && runReal(() => resumeFromBreak(session)),
         add: async (name: string, question: string) => {
-          if (session) await addEntry(session.id, name, question);
+          if (!session) return;
+          await addEntry(session.id, name, question);
+          await refresh();
         },
-        del: (id: string) => deleteEntry(id).catch((e) => setError(e.message)),
+        del: (id: string) => runReal(() => deleteEntry(id)),
       };
 
   if (error) {
