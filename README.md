@@ -3,6 +3,8 @@
 4시간 워크숍 Q&A 운영을 위한 단일 웹 대시보드.
 참가자가 셀프로 이름+질문을 등록하면 운영자가 10분씩 돌아가며 진행한다.
 
+**Live:** https://webinar-qa-snowy.vercel.app
+
 ## Stack
 
 - Next.js 15 (App Router) + TypeScript
